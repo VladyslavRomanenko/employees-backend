@@ -59,4 +59,5 @@ module.exports = {
   logout: controlWrapper(logout),
   getAll: controlWrapper(getAll),
 };
-// /
+
+//
