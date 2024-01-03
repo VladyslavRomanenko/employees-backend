@@ -10,6 +10,7 @@ const {
 const schemas = require("../../schemas/user");
 
 const validateBody = require("../../decorators/validateBody");
+// const { isValidId, authenticate } = require("../../middlewares");
 
 const router = express.Router();
 
