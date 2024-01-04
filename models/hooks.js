@@ -6,7 +6,7 @@ const handleValidateError = (error, data, next) => {
 };
 
 const runUpdateValidators = function (next) {
-  this.optitions.runValidators = true;
+  this.options.runValidators = true;
   next();
 };
 

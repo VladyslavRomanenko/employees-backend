@@ -7,7 +7,6 @@ const employeeSchema = Joi.object({
   address: Joi.string().required(),
   email: Joi.string().required(),
   phone: Joi.string().required(),
-  userId: Joi.string().required(),
 });
 
 module.exports = {

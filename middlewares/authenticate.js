@@ -1,10 +1,8 @@
-const httpError = require("../helpers");
 const jwt = require("jsonwebtoken");
-const isValidId = require("./isValidId");
-
-const User = require("../models/User");
-
+const { httpError } = require("../helpers");
 const { JWT_SECRET } = process.env;
+
+const { User } = require("../models/User");
 
 const authenticate = async (req, res, next) => {
   const { authorization = "" } = req.headers;
@@ -16,14 +14,13 @@ const authenticate = async (req, res, next) => {
   try {
     const { id } = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(id);
-    if (!user || !user.token || user.token !== token) {
+    if (!user || !user.token) {
       next(httpError(401));
     }
     req.user = user;
     next();
-  } catch (error) {
+  } catch {
     next(httpError(401));
   }
 };
-
 module.exports = authenticate;

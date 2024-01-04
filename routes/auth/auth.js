@@ -1,16 +1,10 @@
 const express = require("express");
-const {
-  login,
-  register,
-  current,
-  getAll,
-  logout,
-} = require("../../controllers/auth");
+const { login, register, current, logout } = require("../../controllers/auth");
 
 const schemas = require("../../schemas/user");
 
 const validateBody = require("../../decorators/validateBody");
-// const { isValidId, authenticate } = require("../../middlewares");
+const { authenticate } = require("../../middlewares");
 
 const router = express.Router();
 
@@ -19,8 +13,7 @@ const signinValidateMiddleware = validateBody(schemas.userSignInSchema);
 
 router.post("/register", signupValidateMiddleware, register);
 router.post("/login", signinValidateMiddleware, login);
-router.get("/current", current);
-router.get("/logout", logout);
-router.get("/get", getAll);
+router.get("/current", authenticate, current);
+router.post("/logout", authenticate, logout);
 
 module.exports = router;

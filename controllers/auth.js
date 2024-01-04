@@ -4,6 +4,7 @@ const httpError = require("../helpers/httpError");
 
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const generateToken = require("../decorators/generateToken");
 const { JWT_SECRET } = process.env;
 
 // REISTER
@@ -15,10 +16,19 @@ const register = async (req, res) => {
     throw httpError(409, "Email already exists");
   }
   const hashPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ ...req.body, password: hashPassword });
+
+  const newUser = await User.create({
+    ...req.body,
+    password: hashPassword,
+  });
+
+  newUser.token = generateToken(newUser._id);
+  await newUser.save();
+
   res.status(201).json({
     name: newUser.name,
     email: newUser.email,
+    token: newUser.token,
   });
 };
 
@@ -37,19 +47,18 @@ const login = async (req, res) => {
     id: user._id,
   };
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "23h" });
+  await User.findByIdAndUpdate(user._id, { token });
   res.json({ token: token });
 };
 
-const current = async (req, res) => {
-  res.send("current");
+const current = (req, res) => {
+  const { name, email, id } = req.user;
+  res.json({ name, email, id });
 };
 const logout = async (req, res) => {
-  res.send("logout");
-};
-
-const getAll = async (req, res) => {
-  const allUsers = await User.find();
-  res.json(allUsers);
+  const { id } = req.user;
+  await User.findByIdAndUpdate(id, { token: "" });
+  res.status(200).json({ token: "Logout success" });
 };
 
 module.exports = {
@@ -57,7 +66,6 @@ module.exports = {
   register: controlWrapper(register),
   current: controlWrapper(current),
   logout: controlWrapper(logout),
-  getAll: controlWrapper(getAll),
 };
 
 //

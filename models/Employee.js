@@ -23,14 +23,14 @@ const employeeSchema = new Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
     },
     phone: {
       type: String,
       required: true,
     },
-    userId: {
-      type: String,
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
     },
   },
   { versionKey: false, timestamps: true }
